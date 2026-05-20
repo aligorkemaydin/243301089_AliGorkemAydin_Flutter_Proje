@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "786184839311",
+    "project_id": "komur-toptan-takip",
+    "storage_bucket": "komur-toptan-takip.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:786184839311:android:79513e8e1b1d90430190fa",
+        "android_client_info": {
+          "package_name": "com.example.p243301089_aligorkemaydin_flutter_proje"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvOJCWwNm8hi0rjaiokHsBmbAUp9sPJOI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
