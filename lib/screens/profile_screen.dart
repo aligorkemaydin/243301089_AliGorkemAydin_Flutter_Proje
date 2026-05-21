@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../services/auth_service.dart';
+import '../services/log_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -25,6 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
             onPressed: () async {
+              await LogService.addLog('Hesap Silme', 'Kullanıcı hesabını kalıcı olarak sildi.');
               Navigator.pop(context);
               Navigator.pop(context);
               await AuthService().deleteAccount();
@@ -60,6 +62,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     .collection('stocks')
                     .doc(fuelType)
                     .set({'quantity': currentStock + addedStock});
+                    
+                await LogService.addLog('Stok Ekleme', '$fuelType için profil ekranından $addedStock Ton stok eklendi.');
+                
                 if (mounted) Navigator.pop(context);
               },
               child: const Text('Ekle'),
@@ -185,11 +190,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                 ],
-                  ),
-                ),
-              );
-            },
-          ),
-        );
-      }
-    }
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}

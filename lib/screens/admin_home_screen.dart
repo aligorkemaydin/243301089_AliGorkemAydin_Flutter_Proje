@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../services/auth_service.dart';
+import '../services/log_service.dart';
 import 'profile_screen.dart';
 
 class AdminHomeScreen extends StatefulWidget {
@@ -27,6 +28,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           .doc(orderId)
           .update({'status': newStatus});
     }
+    
+    await LogService.addLog('Durum Güncellemesi', 'Sipariş ID: $orderId durumu $newStatus olarak güncellendi.');
   }
 
   void _approveOrder(String orderId, String fuelType, int orderQty, int currentStock) async {
@@ -39,6 +42,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
         .collection('orders')
         .doc(orderId)
         .update({'status': 'Onaylandı'});
+        
+    await LogService.addLog('Sipariş Onayı', 'Sipariş ID: $orderId onaylandı. Stoktan $orderQty Ton düşüldü.');
   }
 
   void _showUpdateStockDialog(String fuelType, int currentStock) {
@@ -65,6 +70,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                     .collection('stocks')
                     .doc(fuelType)
                     .set({'quantity': currentStock + addedStock});
+                    
+                await LogService.addLog('Stok Ekleme', '$fuelType için $addedStock Ton stok eklendi.');
+                
                 if (mounted) Navigator.pop(context);
               },
               child: const Text('Ekle'),
