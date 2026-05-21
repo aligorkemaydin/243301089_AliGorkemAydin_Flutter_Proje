@@ -14,20 +14,20 @@ class _LoginScreenState extends State<LoginScreen> {
   final AuthService _authService = AuthService();
   
   bool _isLoading = false;
-  bool _isLoginMode = true; // Ekran giriş modunda mı kayıt modunda mı?
-  String _selectedRole = 'Müşteri'; // Varsayılan rol
+  bool _isLoginMode = true; 
+  String _selectedRole = 'Müşteri'; 
 
   void _handleAuth() async {
     setState(() => _isLoading = true);
     try {
       if (_isLoginMode) {
-        // Sadece Giriş Yap
+        
         await _authService.signIn(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
       } else {
-        // Seçilen rolle Kayıt Ol
+        
         await _authService.signUp(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
@@ -85,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 16),
                 
-                // Sadece Kayıt modundayken Rol Seçiciyi göster
+               
                 if (!_isLoginMode)
                   DropdownButtonFormField<String>(
                     value: _selectedRole,
@@ -129,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           TextButton(
                             onPressed: () {
                               setState(() {
-                                _isLoginMode = !_isLoginMode; // Modu değiştir
+                                _isLoginMode = !_isLoginMode; 
                               });
                             },
                             child: Text(
