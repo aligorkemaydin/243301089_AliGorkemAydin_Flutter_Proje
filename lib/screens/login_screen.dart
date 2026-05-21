@@ -11,6 +11,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _companyNameController = TextEditingController();
   final AuthService _authService = AuthService();
   
   bool _isLoading = false;
@@ -18,6 +19,13 @@ class _LoginScreenState extends State<LoginScreen> {
   String _selectedRole = 'Müşteri';
 
   void _handleAuth() async {
+    if (!_isLoginMode && _selectedRole == 'Toptancı' && _companyNameController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Lütfen şirket adını giriniz.'), backgroundColor: Colors.red),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
     try {
       if (_isLoginMode) {
@@ -30,6 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
           role: _selectedRole,
+          companyName: _selectedRole == 'Toptancı' ? _companyNameController.text.trim() : null,
         );
       }
     } catch (e) {
@@ -95,6 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     prefixIcon: Icon(Icons.email),
                   ),
                   keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
                 ),
                 const SizedBox(height: 16),
                 TextField(
@@ -105,6 +115,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     prefixIcon: Icon(Icons.lock),
                   ),
                   obscureText: true,
+                  textInputAction: _isLoginMode ? TextInputAction.done : TextInputAction.next,
+                  onSubmitted: (_) {
+                    if (_isLoginMode) _handleAuth();
+                  },
                 ),
                 if (_isLoginMode)
                   Align(
@@ -135,7 +149,21 @@ class _LoginScreenState extends State<LoginScreen> {
                       });
                     },
                   ),
-                  
+                if (!_isLoginMode && _selectedRole == 'Toptancı')
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    key: const ValueKey('companyField'),
+                    child: TextField(
+                      controller: _companyNameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Şirket Adı',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.business),
+                      ),
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (_) => _handleAuth(),
+                    ),
+                  ),
                 const SizedBox(height: 24),
                 _isLoading
                     ? const Center(child: CircularProgressIndicator(color: Colors.orange))
