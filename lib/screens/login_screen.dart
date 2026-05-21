@@ -19,24 +19,36 @@ class _LoginScreenState extends State<LoginScreen> {
   String _selectedRole = 'Müşteri';
 
   void _handleAuth() async {
-    if (!_isLoginMode && _selectedRole == 'Toptancı' && _companyNameController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Lütfen şirket adını giriniz.'), backgroundColor: Colors.red),
-      );
-      return;
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (!_isLoginMode) {
+      if (_selectedRole == 'Toptancı' && _companyNameController.text.trim().isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Lütfen şirket adını giriniz.'), backgroundColor: Colors.red),
+        );
+        return;
+      }
+
+      if (password.length < 8 || !password.contains(RegExp(r'[A-ZÇĞİÖŞÜ]'))) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Şifreniz en az 8 karakterden oluşmalı ve en az bir büyük harf içermelidir.'), backgroundColor: Colors.red),
+        );
+        return;
+      }
     }
 
     setState(() => _isLoading = true);
     try {
       if (_isLoginMode) {
         await _authService.signIn(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),
+          email: email,
+          password: password,
         );
       } else {
         await _authService.signUp(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),
+          email: email,
+          password: password,
           role: _selectedRole,
           companyName: _selectedRole == 'Toptancı' ? _companyNameController.text.trim() : null,
         );
