@@ -14,20 +14,18 @@ class _LoginScreenState extends State<LoginScreen> {
   final AuthService _authService = AuthService();
   
   bool _isLoading = false;
-  bool _isLoginMode = true; 
-  String _selectedRole = 'Müşteri'; 
+  bool _isLoginMode = true;
+  String _selectedRole = 'Müşteri';
 
   void _handleAuth() async {
     setState(() => _isLoading = true);
     try {
       if (_isLoginMode) {
-        
         await _authService.signIn(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
       } else {
-        
         await _authService.signUp(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
@@ -42,6 +40,31 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  void _resetPassword() async {
+    final email = _emailController.text.trim();
+    if (email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Lütfen e-posta adresinizi girin.'), backgroundColor: Colors.orange),
+      );
+      return;
+    }
+    
+    try {
+      await _authService.sendPasswordResetEmail(email: email);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Şifre sıfırlama bağlantısı e-postanıza gönderildi.'), backgroundColor: Colors.green),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+        );
+      }
     }
   }
 
@@ -83,9 +106,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   obscureText: true,
                 ),
+                if (_isLoginMode)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: _resetPassword,
+                      child: const Text('Şifremi Unuttum'),
+                    ),
+                  ),
                 const SizedBox(height: 16),
-                
-               
                 if (!_isLoginMode)
                   DropdownButtonFormField<String>(
                     value: _selectedRole,
@@ -129,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           TextButton(
                             onPressed: () {
                               setState(() {
-                                _isLoginMode = !_isLoginMode; 
+                                _isLoginMode = !_isLoginMode;
                               });
                             },
                             child: Text(
